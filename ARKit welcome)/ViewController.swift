@@ -16,6 +16,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin]
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -23,8 +24,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
         
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        // MARK: Load Happy Model
+        let scene = SCNScene()
+        let happy = loadModel(named: "art.scnassets/Dragon 2.5_dae.dae")!
+        happy.position = SCNVector3(-0.5, 0, -1)
+        happy.scale = SCNVector3(0.02, 0.02, 0.02)
+        scene.rootNode.addChildNode(happy)
+        
+        let ship = loadModel(named: "art.scnassets/ship.scn")!
+        ship.position = SCNVector3(0.5, 0, -1)
+        scene.rootNode.addChildNode(ship)
+        
         
         // Set the scene to the view
         sceneView.scene = scene
@@ -45,6 +55,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Pause the view's session
         sceneView.session.pause()
+    }
+    
+    func loadModel(named modelName: String) -> SCNNode? {
+       guard let scene = SCNScene(named: modelName) else { return nil }
+        let node = scene.rootNode.clone()
+        
+        return node
     }
 
     // MARK: - ARSCNViewDelegate
